@@ -1,19 +1,36 @@
 # Spatial Representation Analysis of Vision Transformers
 
-This repository contains the code and experiments for the project "Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification". The primary goal is to analyze how Vision Transformers (ViTs) build spatial understanding of satellite imagery compared to traditional CNNs, using the EuroSAT dataset.
+This repository contains the code and experiments for "Spatial Representation Analysis of Vision Transformers for Satellite Image Classification". The goal is to quantify how Vision Transformers (ViTs) encode spatial structure compared to CNNs on EuroSAT, and to surface robust, interpretable insights.
+
+## 🔎 Project Highlights
+- **Spatial probing:** attention rollout, patch shuffling, and occlusion sensitivity.
+- **Comparative modeling:** ViT/Swin vs CNN baselines with controlled ablations.
+- **Robustness & calibration:** adversarial testing and uncertainty metrics.
+- **Reproducibility:** config-driven runs, tracked artifacts, and dataset versioning.
+- **Showcase-ready:** interactive demo + portfolio landing page (in progress).
 
 ## 📋 Table of Contents
-- [Getting Started](#-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#-usage)
-  - [Data Setup](#data-setup)
-  - [Running Experiments](#running-experiments)
-  - [Running the Demo](#running-the-demo)
-- [Development](#-development)
-  - [Linting and Formatting](#linting-and-formatting)
-  - [Running Tests](#running-tests)
-- [Project Structure](#-project-structure)
+- [Spatial Representation Analysis of Vision Transformers](#spatial-representation-analysis-of-vision-transformers)
+  - [📋 Table of Contents](#-table-of-contents)
+  - [🔎 Project Highlights](#-project-highlights)
+  - [🚀 Getting Started](#-getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Usage](#usage)
+    - [Data Setup](#data-setup)
+    - [Running Experiments](#running-experiments)
+    - [Running the Demo](#running-the-demo)
+  - [🌐 Demo & Portfolio](#-demo--portfolio)
+  - [🧾 Technical Report](#-technical-report)
+  - [🧪 Methods + Evaluation](#-methods--evaluation)
+  - [📈 Results (WIP)](#-results-wip)
+  - [🔁 Reproducibility & Tracking](#-reproducibility--tracking)
+  - [🚢 Deployment (Vercel + FastAPI)](#-deployment-vercel--fastapi)
+  - [🛠️ Development](#️-development)
+    - [Linting and Formatting](#linting-and-formatting)
+    - [Running Tests](#running-tests)
+  - [📂 Project Structure](#-project-structure)
+  - [🧭 Roadmap](#-roadmap)
 
 ## 🚀 Getting Started
 
@@ -42,6 +59,7 @@ The EuroSAT dataset is versioned using DVC. To pull the data from the remote sto
 ```bash
 dvc pull
 ```
+See [docs/dvc-remote.md](docs/dvc-remote.md) for configuring the Azure Blob remote (account/container selection, connection strings, rotation).
 
 ### Running Experiments
 Experiments are managed via a training script that accepts arguments using Hydra. To launch a training run:
@@ -57,6 +75,61 @@ A Streamlit dashboard is available to interactively test models.
 ```bash
 poetry run streamlit run eurosat_vit_analysis/app.py
 ```
+
+## 🌐 Demo & Portfolio
+- **Hosted demo:** Vercel + FastAPI (planned).
+- **Custom domain:** `https://spatial-vit.fey-grytnes.com` (planned).
+- **Portfolio page:** Project overview, architecture, results, and links (planned).
+- **Local demo:** See [Running the Demo](#running-the-demo).
+
+## 🧾 Technical Report
+- **Link:** `https://fey-grytnes.com/spatial-vit-report` (planned).
+- **Scope:** Methods, evaluation protocol, key findings, and limitations.
+
+## 🧪 Methods + Evaluation
+**Dataset**
+- EuroSAT with DVC-managed versioning, fixed train/val/test splits, and class balance checks.
+
+**Models**
+- ViT-Base and Swin-Tiny via `timm`, plus CNN baselines (ResNet/ConvNeXt).
+- Full fine-tuning vs parameter-efficient methods (LoRA/adapters) for cost/perf tradeoffs.
+
+**Spatial Probes**
+- Attention rollout, patch-shuffle degradation, and occlusion sensitivity to measure spatial reliance.
+
+**Robustness & Calibration**
+- FGSM at multiple epsilon levels and Expected Calibration Error (ECE) with temperature scaling.
+
+**Metrics**
+- Accuracy, Macro-F1, per-class F1, and 95% confidence intervals.
+
+**Reproducibility**
+- Config-driven runs with fixed seeds; each run logs git SHA, dataset version, and metrics.
+
+## 📈 Results (WIP)
+Planned reporting includes:
+- **Metrics:** Accuracy, Macro-F1, per-class F1, and confidence intervals.
+- **Robustness:** FGSM performance at multiple epsilon levels.
+- **Spatial probes:** Patch-shuffle accuracy deltas and occlusion sensitivity maps.
+
+## 🔁 Reproducibility & Tracking
+- **Configuration:** Experiments launched via a single config entry point (Hydra/Argparse).
+- **Artifacts:** Metrics, checkpoints, and configs tracked in Weights & Biases.
+- **Data:** EuroSAT is versioned with DVC.
+- **Data Remote:** Azure Blob (`spatialvit-eurosat` container) holds the dataset; see `docs/dvc-remote.md`.
+
+## 🚢 Deployment (Vercel + FastAPI)
+**Target**
+- Frontend on Vercel with FastAPI serverless functions for inference.
+- Custom domain: `spatial-vit.fey-grytnes.com`.
+
+**Why this stack**
+- Simple to ship and maintain, with fast global delivery.
+- Sufficient for lightweight inference; keeps the demo snappy for recruiters.
+
+**Notes**
+- Prefer small model artifacts to avoid cold-start delays.
+- Add a basic inference cache to keep responses under ~2 seconds.
 
 ## 🛠️ Development
 
@@ -96,3 +169,6 @@ make test
 ├── Makefile                # Makefile for common commands
 └── README.md
 ```
+
+## 🧭 Roadmap
+See `user stories.md` for the full roadmap and epic-level plan.

@@ -1,0 +1,5 @@
+[core]
+    remote = azure-remote
+['remote "azure-remote"']
+    url = azure://spatialvit-eurosat/eurosat
+    connection_string = DefaultEndpointsProtocol=https;AccountName=YOUR_ACCOUNT;AccountKey=YOUR_KEY;EndpointSuffix=core.windows.net
