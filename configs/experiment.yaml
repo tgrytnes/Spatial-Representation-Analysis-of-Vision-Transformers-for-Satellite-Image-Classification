@@ -1,0 +1,8 @@
+seed: 42
+dataset_version: "v1.0"
+dataset_path: "data/eurosat"
+model:
+  name: "baseline"
+  lr: 0.001
+  epochs: 1
+batch_size: 32

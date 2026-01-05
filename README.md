@@ -70,6 +70,15 @@ poetry run python eurosat_vit_analysis/train.py model=swin_t data=eurosat
 
 Metrics and model artifacts are tracked using Weights & Biases.
 
+### Deterministic Experiment Runner
+Run deterministic experiments with a single config file. The small runner writes a manifest (git SHA, params, and metrics) so you can compare two runs and see consistent metrics:
+
+```bash
+poetry run python -m eurosat_vit_analysis.experiment --config configs/experiment.yaml
+```
+
+Manifests land in the `manifests/` directory and include the dataset version, config, and computed metrics.
+
 ### Running the Demo
 A Streamlit dashboard is available to interactively test models.
 ```bash

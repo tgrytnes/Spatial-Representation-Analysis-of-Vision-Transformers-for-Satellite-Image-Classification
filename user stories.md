@@ -32,7 +32,7 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
     - Pipeline runs `ruff`/`black` plus `pytest` with >= 80% coverage.
     - Environment installs dev tools so lint commands succeed.
 
-- [ ] **Story 1.4: Reproducible Experiments**
+- [x] **Story 1.4: Reproducible Experiments**
   - **As a** Research Engineer, I want deterministic, config-driven runs.
   - **Acceptance Criteria:**
     - All experiments launched via a single config (Hydra/Argparse).
