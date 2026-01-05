@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List, Tuple
 
 import torch
 from torch.utils.data import DataLoader, random_split
@@ -26,7 +25,7 @@ def prepare_data(
     num_workers: int = 4,
     val_split: float = 0.2,
     seed: int = 42,
-) -> Tuple[DataLoader, DataLoader, List[str]]:
+) -> tuple[DataLoader, DataLoader, list[str]]:
     """
     Prepare DataLoaders for EuroSAT.
     """
