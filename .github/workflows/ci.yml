@@ -23,10 +23,15 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev
 
+      - name: Install lint tools
+        run: |
+          pipx install black
+          pipx install ruff
+
       - name: Lint and Format Check
         run: |
-          poetry run ruff check .
-          poetry run black --check .
+          ruff check .
+          black --check .
 
       - name: Test with Coverage
         run: poetry run pytest --cov=eurosat_vit_analysis --cov-fail-under=80
