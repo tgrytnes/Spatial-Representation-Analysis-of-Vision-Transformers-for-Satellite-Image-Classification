@@ -12,18 +12,32 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
     - `pre-commit` hooks installed (Black, Flake8/Ruff, Isort).
     - `Makefile` created for common tasks (`make test`, `make lint`).
 
-- [ ] **Story 1.2: Data Version Control (DVC)**
+- [x] **Story 1.2: Data Version Control (DVC)**
   - **As a** Data Engineer, I want to version control the EuroSAT dataset using DVC.
   - **Acceptance Criteria:**
     - `.dvc` files present in repo; data excluded from git.
-    - `dvc pull` successfully retrieves data from remote storage.
-    - Data loader tests pass after a fresh pull.
+    - `dvc pull` successfully retrieves data from Azure Blob remote.
+    - `dvc push`/`pull` validated for main dataset and run cache.
 
-- [ ] **Story 1.3: CI/CD Pipeline**
+- [x] **Story 1.2b: Configure Azure Blob Remote for DVC**
+  - **As a** Data Engineer, I want the EuroSAT dataset stored in Azure Blob so that any collaborator can fetch it.
+  - **Acceptance Criteria:**
+    - Remote `azure://spatialvit-eurosat/eurosat` configured with a local connection string override.
+    - `dvc push --remote azure-remote` uploads the dataset; `dvc pull --remote azure-remote` rehydrates on a clean clone.
+    - Documentation captures credential rotation and CI secret usage.
+
+- [x] **Story 1.3: CI/CD Pipeline**
   - **As a** Maintainer, I want a GitHub Actions workflow that runs on every Pull Request.
   - **Acceptance Criteria:**
-    - Pipeline runs `pytest` and linter.
-    - Pipeline fails if code coverage is < 80%.
+    - Pipeline runs `ruff`/`black` plus `pytest` with >= 80% coverage.
+    - Environment installs dev tools so lint commands succeed.
+
+- [ ] **Story 1.4: Reproducible Experiments**
+  - **As a** Research Engineer, I want deterministic, config-driven runs.
+  - **Acceptance Criteria:**
+    - All experiments launched via a single config (Hydra/Argparse).
+    - Seeds fixed/logged; metrics match within ±1% across two runs.
+    - Each run emits a manifest (git SHA, dataset version, params, metrics).
 
 ## Epic 2: Advanced Modeling (The Core)
 *Goal: Implement and train state-of-the-art Vision Transformers.*
@@ -39,8 +53,21 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
   - **As a** Researcher, I want to log metrics and artifacts to Weights & Biases.
   - **Acceptance Criteria:**
     - Training script accepts CLI arguments (Hydra/Argparse).
-    - Dashboard visualizes Loss, Accuracy, and F1-score live.
-    - Best model checkpoints are uploaded to W&B.
+    - Dashboard visualizes Loss, Accuracy, and Macro-F1 live.
+    - Best model checkpoints and config files are uploaded to W&B.
+
+- [ ] **Story 2.3: Baselines & Ablations**
+  - **As a** Researcher, I want a rigorous baseline and ablation suite.
+  - **Acceptance Criteria:**
+    - Benchmarks include ResNet and ConvNeXt baselines alongside ViT/Swin.
+    - Report includes Macro-F1, per-class F1, and 95% confidence intervals.
+    - Ablations cover patch size, augmentation strength, and freezing strategy.
+
+- [ ] **Story 2.4: Parameter-Efficient Fine-Tuning**
+  - **As a** Researcher, I want to compare full fine-tuning vs. LoRA/adapters.
+  - **Acceptance Criteria:**
+    - LoRA/adapters reduce trainable parameters by >80%.
+    - Report compares accuracy and training time against full fine-tune.
 
 ## Epic 3: Explainability & Robustness (The Insight)
 *Goal: Analyze spatial reasoning and model fragility.*
@@ -55,7 +82,20 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
   - **As a** Safety Engineer, I want to evaluate the model against gradient-based attacks.
   - **Acceptance Criteria:**
     - Script generates adversarial examples using FGSM.
-    - Report generated comparing accuracy drop of ViT vs. ResNet.
+    - Report compares accuracy drop of ViT vs. ResNet at epsilon {2/255, 4/255}.
+
+- [ ] **Story 3.3: Spatial Probing & Invariance Tests**
+  - **As a** Researcher, I want to quantify spatial reasoning and invariance.
+  - **Acceptance Criteria:**
+    - Patch-shuffle and occlusion tests are implemented and logged.
+    - Accuracy drop under patch-shuffle is reported per class.
+    - Occlusion sensitivity maps are saved for a fixed evaluation set.
+
+- [ ] **Story 3.4: Calibration & Uncertainty**
+  - **As a** Researcher, I want calibrated probabilities and uncertainty metrics.
+  - **Acceptance Criteria:**
+    - Expected Calibration Error (ECE) is computed before/after temperature scaling.
+    - Reliability diagrams are generated for ViT and ResNet.
 
 ## Epic 4: The Demo Application (The Showcase)
 *Goal: A tangible, interactive artifact for demonstration.*
@@ -66,6 +106,21 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
     - User can toggle between ViT and CNN backends.
     - Displays prediction class, confidence score, and Attention Heatmap.
     - Runs locally via `streamlit run app.py`.
+
+- [ ] **Story 4.2: Hosted Demo App**
+  - **As a** Recruiter, I want a public demo link I can try in under a minute.
+  - **Acceptance Criteria:**
+    - Frontend is deployed on Vercel with a FastAPI backend.
+    - Custom domain `spatial-vit.fey-grytnes.com` is configured with HTTPS.
+    - Includes sample gallery and inference cache for <2s response.
+    - Public URL is added to README with screenshots.
+
+- [ ] **Story 4.3: Portfolio Landing Page**
+  - **As a** Hiring Manager, I want a concise page that explains the project impact.
+  - **Acceptance Criteria:**
+    - Page includes problem statement, architecture diagram, and key results.
+    - Links to paper-style report, code, and demo.
+    - Mobile-friendly and loads in <2s on 4G.
 
 ## Epic 5: Stretch Goals (Bleeding Edge)
 *Goal: Explore emerging research trends (2024/2025).*
