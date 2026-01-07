@@ -58,38 +58,35 @@ poetry env use python3.11
 poetry install
 ```
 
-## 5. Configure Secrets & APIs
+## 5. Configure Secrets & APIs (Local .env Transfer)
 
-You have two options: create a `.env` file or export variables manually.
+To avoid typing secrets into the pod, prepare a `.env` file on your **local machine** first. This file is already in `.gitignore` and will never be committed.
 
-### Option A: Create .env file (Recommended)
-Create a file named `.env` in the project root:
-
-```bash
-nano .env
-```
-
-Paste the following content (replace placeholders with your real keys):
+### Local Preparation
+Create a file named `.env` in your local project root:
 
 ```ini
-# Weights & Biases API Key (Found at https://wandb.ai/authorize)
-WANDB_API_KEY=wandb_v1_YourLongKeyHere...
+# Weights & Biases API Key (https://wandb.ai/authorize)
+WANDB_API_KEY=wandb_v1_...
 
-# Azure Storage Connection String (Only needed if using 'dvc pull')
+# Azure Storage Connection String (Required for 'dvc pull')
 AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...;EndpointSuffix=core.windows.net"
 ```
 
-Save and exit (`Ctrl+X`, `Y`, `Enter`).
+### Transfer to Pod
+You can transfer this file to the pod using `scp` (replace `[POD_IP]` and `[PORT]` with your specific RunPod details):
 
-Then, export them to your shell:
 ```bash
-export $(grep -v '^#' .env | xargs)
+scp -P [PORT] .env root@[POD_IP]:/root/Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification/
 ```
 
-### Option B: Interactive Login (W&B Only)
-If you only need W&B and want to type it in:
+*Alternatively, use the "Upload" button in the RunPod Jupyter/Web interface.*
+
+### Apply Secrets
+Once the file is on the pod, export the variables to your current session:
+
 ```bash
-poetry run wandb login
+export $(grep -v '^#' .env | xargs)
 ```
 
 ## 6. Get Data
