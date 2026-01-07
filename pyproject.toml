@@ -50,3 +50,4 @@ ignore = []
 
 [tool.ruff.isort]
 known-first-party = ["eurosat_vit_analysis"]
+known-third-party = ["wandb", "timm", "torch", "numpy", "yaml", "tqdm", "peft", "transformers", "adlfs", "azure-identity", "azure-storage-blob"]

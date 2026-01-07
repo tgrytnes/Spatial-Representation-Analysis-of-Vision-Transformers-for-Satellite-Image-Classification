@@ -13,10 +13,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import wandb
 import yaml
 from tqdm import tqdm
 
-import wandb
 from eurosat_vit_analysis.data import prepare_data
 from eurosat_vit_analysis.models import create_model
 
