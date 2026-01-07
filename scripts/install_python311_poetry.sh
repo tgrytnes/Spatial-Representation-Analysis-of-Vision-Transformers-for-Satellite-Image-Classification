@@ -4,6 +4,8 @@ set -euo pipefail
 PYTHON_VERSION="${PYTHON_VERSION:-3.11.9}"
 PYTHON_PREFIX="${PYTHON_PREFIX:-/usr/local}"
 POETRY_VERSION="${POETRY_VERSION:-1.8.3}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENV_FILE="${ENV_FILE:-${SCRIPT_DIR}/../.env}"
 
 if [[ "$(id -u)" -ne 0 ]]; then
   echo "Run as root (or via sudo) so Python can be installed to ${PYTHON_PREFIX}."
@@ -58,3 +60,24 @@ curl -sSL https://install.python-poetry.org | "${PYTHON_BIN}" -
 
 echo "Poetry installed at ${HOME}/.local/bin/poetry"
 echo "Make sure ${HOME}/.local/bin is on your PATH."
+
+if [[ -f "${ENV_FILE}" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "${ENV_FILE}"
+  set +a
+fi
+
+GIT_NAME="${GIT_USER_NAME:-${GITHUB_NAME:-}}"
+GIT_EMAIL="${GIT_USER_EMAIL:-${GITHUB_EMAIL:-}}"
+if [[ -z "${GIT_EMAIL}" && -n "${GITHUB_USERNAME:-}" ]]; then
+  GIT_EMAIL="${GITHUB_USERNAME}@users.noreply.github.com"
+fi
+
+if [[ -n "${GIT_NAME}" && -n "${GIT_EMAIL}" ]]; then
+  echo "Configuring git user.name and user.email..."
+  git config --global user.name "${GIT_NAME}"
+  git config --global user.email "${GIT_EMAIL}"
+else
+  echo "Skipping git config (set GIT_USER_NAME/GIT_USER_EMAIL or GITHUB_NAME/GITHUB_EMAIL in .env)."
+fi
