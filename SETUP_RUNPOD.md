@@ -23,7 +23,16 @@ update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 2
 # Choose 2 (Python 3.11) if prompted, or it might auto-select.
 ```
 
-## 2. Install Poetry
+## 2. Configure Git
+
+Before cloning or committing, set up your identity:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+## 3. Install Poetry
 
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
