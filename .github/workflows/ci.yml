@@ -31,15 +31,10 @@ jobs:
         # Use --with dev to get pytest, coverage, etc.
         run: poetry install --with dev --no-interaction --no-ansi
 
-      - name: Install lint tools
-        run: |
-          pipx install black
-          pipx install ruff
-
       - name: Lint and Format Check
         run: |
-          ruff check .
-          black --check .
+          poetry run ruff check .
+          poetry run black --check .
 
       - name: Test with Coverage
         # Run pytest via poetry to ensure venv is used
