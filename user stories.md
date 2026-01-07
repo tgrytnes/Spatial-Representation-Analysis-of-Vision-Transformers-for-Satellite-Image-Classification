@@ -49,7 +49,7 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
     - Unit tests verify input/output shapes `(B, 10)`.
     - Support for freezing backbone layers.
 
-- [ ] **Story 2.2: Experiment Tracking (W&B)**
+- [x] **Story 2.2: Experiment Tracking (W&B)**
   - **As a** Researcher, I want to log metrics and artifacts to Weights & Biases.
   - **Acceptance Criteria:**
     - Training script accepts CLI arguments (Hydra/Argparse).

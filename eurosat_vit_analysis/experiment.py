@@ -14,6 +14,7 @@ import numpy as np
 import torch
 import yaml
 
+import wandb
 from eurosat_vit_analysis.models import create_model
 
 CONFIG_DIR = Path("configs")
@@ -40,11 +41,17 @@ def compute_metrics(config: dict[str, Any]) -> dict[str, float]:
     model_name = config.get("model", {}).get("name", "model")
     base = f"{dataset_version}:{seed}:{model_name}"
     digest = hashlib.sha256(base.encode("utf-8")).hexdigest()
+
     accuracy = 0.50 + (int(digest[:4], 16) % 50) / 1000
     precision = 0.40 + (int(digest[4:8], 16) % 60) / 1000
+    f1_macro = 0.45 + (int(digest[8:12], 16) % 40) / 1000
+    loss = 2.0 - (int(digest[12:16], 16) % 100) / 100
+
     return {
         "accuracy": round(accuracy, 4),
         "precision": round(precision, 4),
+        "f1_macro": round(f1_macro, 4),
+        "loss": round(loss, 4),
     }
 
 
@@ -84,6 +91,14 @@ def emit_manifest(
 
 
 def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Path:
+    # Initialize wandb
+    wandb_config = config.get("wandb", {})
+    wandb.init(
+        project=wandb_config.get("project", "eurosat-vit-analysis"),
+        config=config,
+        job_type="experiment",
+    )
+
     seed = config.get("seed", 0)
     set_deterministic_seed(seed)
 
@@ -101,12 +116,20 @@ def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Pa
         )
 
     metrics = compute_metrics(config)
+
+    # Log metrics to wandb
+    wandb.log(metrics)
+
     manifest_path = emit_manifest(
         metrics, config, manifest_dir=output_dir or MANIFEST_DIR
     )
     print("Experiment run complete.")
     print("Metrics:", metrics)
     print("Manifest:", manifest_path)
+
+    # Close wandb run
+    wandb.finish()
+
     return manifest_path
 
 

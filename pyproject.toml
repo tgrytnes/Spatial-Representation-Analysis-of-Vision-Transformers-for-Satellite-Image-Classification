@@ -14,7 +14,7 @@ torchvision = "^0.17.0"
 torchaudio = "^2.2.0"
 timm = "^0.9.5"
 dvc = {extras = ["s3"], version = "^3.0.0"} # Assuming S3 for remote storage
-wandb = "^0.15.8"
+wandb = "^0.23.1"
 hydra-core = "^1.3.2"
 streamlit = "^1.26.0"
 matplotlib = "^3.7.2"
