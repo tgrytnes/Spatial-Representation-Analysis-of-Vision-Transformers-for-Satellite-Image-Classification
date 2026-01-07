@@ -17,11 +17,17 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install Rust (for tokenizers/peft)
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
       - name: Install Poetry
         run: pipx install poetry
 
       - name: Install dependencies
-        run: poetry install --with dev
+        run: poetry install --with dev --no-interaction
 
       - name: Install lint tools
         run: |
