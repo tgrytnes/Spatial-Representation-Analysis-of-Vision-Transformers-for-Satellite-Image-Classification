@@ -63,7 +63,7 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
     - Report includes Macro-F1, per-class F1, and 95% confidence intervals.
     - Ablations cover patch size, augmentation strength, and freezing strategy.
 
-- [ ] **Story 2.4: Parameter-Efficient Fine-Tuning**
+- [x] **Story 2.4: Parameter-Efficient Fine-Tuning**
   - **As a** Researcher, I want to compare full fine-tuning vs. LoRA/adapters.
   - **Acceptance Criteria:**
     - LoRA/adapters reduce trainable parameters by >80%.
