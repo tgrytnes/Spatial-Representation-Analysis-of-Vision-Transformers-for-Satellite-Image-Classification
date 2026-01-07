@@ -9,7 +9,8 @@ def create_model(
     Factory function to create models using timm.
 
     Args:
-        model_name (str): Name of the model ('swin_t' or 'vit_base').
+        model_name (str): Name of the model ('swin_t', 'vit_base', 'resnet50',
+            'convnext_t').
         num_classes (int): Number of output classes.
         freeze_backbone (bool): Whether to freeze backbone parameters.
 
@@ -19,6 +20,8 @@ def create_model(
     timm_model_names = {
         "swin_t": "swin_tiny_patch4_window7_224",
         "vit_base": "vit_base_patch16_224",
+        "resnet50": "resnet50",
+        "convnext_t": "convnext_tiny",
     }
 
     if model_name not in timm_model_names:
@@ -37,6 +40,8 @@ def create_model(
         for name, param in model.named_parameters():
             # Standard timm naming for classifier head is usually 'head' or 'fc'
             # For Swin and ViT it is typically 'head'.
+            # For ResNet it is 'fc'.
+            # For ConvNeXt it is 'head'.
             if "head" not in name and "fc" not in name:
                 param.requires_grad = False
             else:

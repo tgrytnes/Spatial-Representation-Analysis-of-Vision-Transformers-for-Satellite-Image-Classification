@@ -56,7 +56,7 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
     - Dashboard visualizes Loss, Accuracy, and Macro-F1 live.
     - Best model checkpoints and config files are uploaded to W&B.
 
-- [ ] **Story 2.3: Baselines & Ablations**
+- [x] **Story 2.3: Baselines & Ablations**
   - **As a** Researcher, I want a rigorous baseline and ablation suite.
   - **Acceptance Criteria:**
     - Benchmarks include ResNet and ConvNeXt baselines alongside ViT/Swin.

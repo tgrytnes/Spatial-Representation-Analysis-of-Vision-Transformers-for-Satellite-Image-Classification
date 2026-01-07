@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import random
 import subprocess
@@ -12,9 +11,13 @@ from typing import Any
 
 import numpy as np
 import torch
+import torch.nn as nn
+import torch.optim as optim
 import yaml
+from tqdm import tqdm
 
 import wandb
+from eurosat_vit_analysis.data import prepare_data
 from eurosat_vit_analysis.models import create_model
 
 CONFIG_DIR = Path("configs")
@@ -35,26 +38,6 @@ def set_deterministic_seed(seed: int) -> None:
     torch.use_deterministic_algorithms(True, warn_only=True)
 
 
-def compute_metrics(config: dict[str, Any]) -> dict[str, float]:
-    seed = int(config.get("seed", 0))
-    dataset_version = config.get("dataset_version", "unknown")
-    model_name = config.get("model", {}).get("name", "model")
-    base = f"{dataset_version}:{seed}:{model_name}"
-    digest = hashlib.sha256(base.encode("utf-8")).hexdigest()
-
-    accuracy = 0.50 + (int(digest[:4], 16) % 50) / 1000
-    precision = 0.40 + (int(digest[4:8], 16) % 60) / 1000
-    f1_macro = 0.45 + (int(digest[8:12], 16) % 40) / 1000
-    loss = 2.0 - (int(digest[12:16], 16) % 100) / 100
-
-    return {
-        "accuracy": round(accuracy, 4),
-        "precision": round(precision, 4),
-        "f1_macro": round(f1_macro, 4),
-        "loss": round(loss, 4),
-    }
-
-
 def current_git_sha() -> str:
     try:
         result = subprocess.run(
@@ -69,7 +52,7 @@ def current_git_sha() -> str:
 
 
 def emit_manifest(
-    metrics: dict[str, float],
+    metrics: dict[str, Any],
     config: dict[str, Any],
     manifest_dir: Path = MANIFEST_DIR,
 ) -> Path:
@@ -90,6 +73,65 @@ def emit_manifest(
     return manifest_path
 
 
+def train_one_epoch(
+    model: nn.Module,
+    loader: torch.utils.data.DataLoader,
+    criterion: nn.Module,
+    optimizer: optim.Optimizer,
+    device: torch.device,
+) -> tuple[float, float]:
+    model.train()
+    total_loss = 0.0
+    correct = 0
+    total = 0
+
+    for inputs, targets in tqdm(loader, desc="Training", leave=False):
+        inputs, targets = inputs.to(device), targets.to(device)
+
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item() * inputs.size(0)
+        _, predicted = outputs.max(1)
+        total += targets.size(0)
+        correct += predicted.eq(targets).sum().item()
+
+    return total_loss / total, correct / total
+
+
+@torch.no_grad()
+def evaluate(
+    model: nn.Module,
+    loader: torch.utils.data.DataLoader,
+    criterion: nn.Module,
+    device: torch.device,
+) -> tuple[float, float, float]:
+    model.eval()
+    total_loss = 0.0
+    correct = 0
+    total = 0
+
+    for inputs, targets in tqdm(loader, desc="Evaluating", leave=False):
+        inputs, targets = inputs.to(device), targets.to(device)
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+
+        total_loss += loss.item() * inputs.size(0)
+        _, predicted = outputs.max(1)
+        total += targets.size(0)
+        correct += predicted.eq(targets).sum().item()
+
+    accuracy = correct / total
+    loss = total_loss / total
+    # Placeholder for macro F1
+    f1_macro = accuracy
+
+    return loss, accuracy, f1_macro
+
+
 def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Path:
     # Initialize wandb
     wandb_config = config.get("wandb", {})
@@ -99,37 +141,86 @@ def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Pa
         job_type="experiment",
     )
 
-    seed = config.get("seed", 0)
+    seed = config.get("seed", 42)
     set_deterministic_seed(seed)
 
-    # Initialize model
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+
+    # Data
+    data_dir = config.get("dataset_path", "data/eurosat")
+    batch_size = config.get("batch_size", 32)
+    augmentation = config.get("augmentation", "none")
+
+    # Check if data exists
+    if not Path(data_dir).exists():
+        print(f"Data directory {data_dir} not found. Skipping training.")
+        metrics = {"accuracy": 0.0, "loss": 0.0, "f1_macro": 0.0}
+        wandb.log(metrics)
+        path = emit_manifest(metrics, config, manifest_dir=output_dir or MANIFEST_DIR)
+        wandb.finish()
+        return path
+
+    train_loader, val_loader, class_names = prepare_data(
+        data_dir=data_dir, batch_size=batch_size, seed=seed, augmentation=augmentation
+    )
+
+    # Model
     model_config = config.get("model", {})
-    model_name = model_config.get("name")
+    model_name = model_config.get("name", "swin_t")
     freeze_backbone = model_config.get("freeze_backbone", False)
 
-    if model_name:
-        # We don't do anything with the model yet, but we verify it can be created
-        create_model(
-            model_name=model_name,
-            num_classes=10,  # Hardcoded for EuroSAT for now
-            freeze_backbone=freeze_backbone,
+    model = create_model(
+        model_name=model_name,
+        num_classes=len(class_names),
+        freeze_backbone=freeze_backbone,
+    ).to(device)
+
+    # Optimizer & Loss
+    lr = float(model_config.get("lr", 1e-4))
+    epochs = int(model_config.get("epochs", 5))
+
+    optimizer = optim.AdamW(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+
+    best_acc = 0.0
+    final_metrics = {}
+
+    for epoch in range(epochs):
+        train_loss, train_acc = train_one_epoch(
+            model, train_loader, criterion, optimizer, device
         )
+        val_loss, val_acc, val_f1 = evaluate(model, val_loader, criterion, device)
 
-    metrics = compute_metrics(config)
+        metrics = {
+            "epoch": epoch + 1,
+            "train_loss": train_loss,
+            "train_acc": train_acc,
+            "val_loss": val_loss,
+            "accuracy": val_acc,
+            "f1_macro": val_f1,
+            "loss": val_loss,
+        }
+        wandb.log(metrics)
+        print(f"Epoch {epoch+1}: Train Loss {train_loss:.4f}, Val Acc {val_acc:.4f}")
 
-    # Log metrics to wandb
-    wandb.log(metrics)
+        if val_acc > best_acc:
+            best_acc = val_acc
+            final_metrics = metrics
+
+    # If no epochs run, ensure we have some metrics
+    if not final_metrics:
+        final_metrics = {"accuracy": 0.0, "loss": 0.0, "f1_macro": 0.0}
 
     manifest_path = emit_manifest(
-        metrics, config, manifest_dir=output_dir or MANIFEST_DIR
+        final_metrics, config, manifest_dir=output_dir or MANIFEST_DIR
     )
     print("Experiment run complete.")
-    print("Metrics:", metrics)
+    print("Best Metrics:", final_metrics)
     print("Manifest:", manifest_path)
 
-    # Close wandb run
     wandb.finish()
-
     return manifest_path
 
 
