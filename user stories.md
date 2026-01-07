@@ -42,7 +42,7 @@ This document outlines the development roadmap for the EuroSAT Vision Transforme
 ## Epic 2: Advanced Modeling (The Core)
 *Goal: Implement and train state-of-the-art Vision Transformers.*
 
-- [ ] **Story 2.1: Model Factory (Swin & ViT)**
+- [x] **Story 2.1: Model Factory (Swin & ViT)**
   - **As a** Researcher, I want a factory pattern to instantiate Swin-Tiny and ViT-Base models using `timm`.
   - **Acceptance Criteria:**
     - `create_model('swin_t')` returns correct architecture with 10 output classes.

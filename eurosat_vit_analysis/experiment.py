@@ -14,6 +14,8 @@ import numpy as np
 import torch
 import yaml
 
+from eurosat_vit_analysis.models import create_model
+
 CONFIG_DIR = Path("configs")
 DEFAULT_CONFIG = CONFIG_DIR / "experiment.yaml"
 MANIFEST_DIR = Path("manifests")
@@ -84,6 +86,20 @@ def emit_manifest(
 def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Path:
     seed = config.get("seed", 0)
     set_deterministic_seed(seed)
+
+    # Initialize model
+    model_config = config.get("model", {})
+    model_name = model_config.get("name")
+    freeze_backbone = model_config.get("freeze_backbone", False)
+
+    if model_name:
+        # We don't do anything with the model yet, but we verify it can be created
+        create_model(
+            model_name=model_name,
+            num_classes=10,  # Hardcoded for EuroSAT for now
+            freeze_backbone=freeze_backbone,
+        )
+
     metrics = compute_metrics(config)
     manifest_path = emit_manifest(
         metrics, config, manifest_dir=output_dir or MANIFEST_DIR
