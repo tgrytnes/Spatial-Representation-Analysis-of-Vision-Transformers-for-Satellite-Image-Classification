@@ -27,7 +27,9 @@ jobs:
         run: pipx install poetry
 
       - name: Install dependencies
-        run: poetry install --with dev --no-interaction
+        # Use --no-interaction and --no-ansi to keep logs clean
+        # Use --with dev to get pytest, coverage, etc.
+        run: poetry install --with dev --no-interaction --no-ansi
 
       - name: Install lint tools
         run: |
@@ -40,4 +42,5 @@ jobs:
           black --check .
 
       - name: Test with Coverage
+        # Run pytest via poetry to ensure venv is used
         run: poetry run pytest --cov=eurosat_vit_analysis --cov-fail-under=80
