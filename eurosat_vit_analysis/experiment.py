@@ -172,6 +172,7 @@ def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Pa
     freeze_backbone = model_config.get("freeze_backbone", False)
     use_lora = model_config.get("use_lora", False)
     lora_r = model_config.get("lora_r", 16)
+    pretrained = model_config.get("pretrained", True)
 
     model = create_model(
         model_name=model_name,
@@ -179,6 +180,7 @@ def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Pa
         freeze_backbone=freeze_backbone,
         use_lora=use_lora,
         lora_r=lora_r,
+        pretrained=pretrained,
     ).to(device)
 
     # Log parameter stats

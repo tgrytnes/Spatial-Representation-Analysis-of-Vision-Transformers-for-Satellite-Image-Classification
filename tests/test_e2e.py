@@ -45,6 +45,7 @@ def test_e2e_training_run(tmp_path: Path):
             "lr": 0.001,
             "epochs": 1,
             "freeze_backbone": True,
+            "pretrained": False,
         },
         "wandb": {"project": "test-project"},
     }

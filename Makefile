@@ -15,11 +15,11 @@ install:
 	poetry run pre-commit install
 
 lint:
-	poetry run ruff .
+	poetry run ruff check .
 	poetry run black --check .
 
 format:
-	poetry run ruff --fix .
+	poetry run ruff check --fix .
 	poetry run black .
 
 test:

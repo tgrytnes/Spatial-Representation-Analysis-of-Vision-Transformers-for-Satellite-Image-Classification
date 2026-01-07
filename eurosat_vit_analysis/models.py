@@ -9,6 +9,7 @@ def create_model(
     freeze_backbone: bool = False,
     use_lora: bool = False,
     lora_r: int = 16,
+    pretrained: bool = True,
 ) -> nn.Module:
     """
     Factory function to create models using timm, optionally with LoRA.
@@ -20,6 +21,7 @@ def create_model(
         freeze_backbone (bool): Whether to freeze backbone parameters.
         use_lora (bool): Whether to use LoRA (Low-Rank Adaptation).
         lora_r (int): LoRA rank.
+        pretrained (bool): Whether to load pretrained ImageNet weights.
 
     Returns:
         nn.Module: The created model.
@@ -41,7 +43,7 @@ def create_model(
 
     # Create the model
     # We explicitly set num_classes to ensure the head is correctly sized
-    model = timm.create_model(timm_name, pretrained=True, num_classes=num_classes)
+    model = timm.create_model(timm_name, pretrained=pretrained, num_classes=num_classes)
 
     if use_lora:
         # Define target modules based on architecture

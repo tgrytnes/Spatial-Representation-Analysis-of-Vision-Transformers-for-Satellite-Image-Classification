@@ -8,7 +8,7 @@ from eurosat_vit_analysis.models import create_model
 @pytest.mark.parametrize("model_name", ["swin_t", "vit_base", "resnet50", "convnext_t"])
 def test_create_model_returns_model(model_name):
     """Test that create_model returns a torch.nn.Module."""
-    model = create_model(model_name, num_classes=10)
+    model = create_model(model_name, num_classes=10, pretrained=False)
     assert isinstance(model, torch.nn.Module)
 
 
@@ -19,7 +19,7 @@ def test_model_output_shape(model_name):
     # EuroSAT images are 64x64, but generic timm models often default to 224x224.
     input_tensor = torch.randn(batch_size, 3, 224, 224)
 
-    model = create_model(model_name, num_classes=10)
+    model = create_model(model_name, num_classes=10, pretrained=False)
     output = model(input_tensor)
 
     assert output.shape == (batch_size, 10)
@@ -34,7 +34,9 @@ def test_create_model_invalid_name():
 @pytest.mark.parametrize("model_name", ["swin_t", "vit_base", "resnet50", "convnext_t"])
 def test_freeze_backbone(model_name):
     """Test that freeze_backbone=True freezes the backbone but not the head."""
-    model = create_model(model_name, num_classes=10, freeze_backbone=True)
+    model = create_model(
+        model_name, num_classes=10, freeze_backbone=True, pretrained=False
+    )
 
     frozen_params = []
     active_params = []
@@ -60,11 +62,15 @@ def test_freeze_backbone(model_name):
 def test_create_model_lora(model_name):
     """Test that use_lora=True returns a PeftModel with reduced trainable params."""
     # Create full model
-    full_model = create_model(model_name, num_classes=10, use_lora=False)
+    full_model = create_model(
+        model_name, num_classes=10, use_lora=False, pretrained=False
+    )
     full_params = sum(p.numel() for p in full_model.parameters() if p.requires_grad)
 
     # Create LoRA model
-    lora_model = create_model(model_name, num_classes=10, use_lora=True, lora_r=4)
+    lora_model = create_model(
+        model_name, num_classes=10, use_lora=True, lora_r=4, pretrained=False
+    )
     lora_params = sum(p.numel() for p in lora_model.parameters() if p.requires_grad)
 
     # Verify it is a PEFT model
