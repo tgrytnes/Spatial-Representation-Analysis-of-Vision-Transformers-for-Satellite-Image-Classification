@@ -101,18 +101,12 @@ poetry run wandb login
 
 ## 8. Get Data
 
-### Path A: Fast Download (Recommended)
-Download the raw dataset directly from the source. No Azure keys required.
-```bash
-poetry run python download.py
-```
-
-### Path B: DVC Pull (Requires Azure Key in .env)
+###  DVC Pull (Requires Azure Key in .env)
 ```bash
 poetry run dvc pull
 ```
 
-## 9. Run Benchmarks
+## 9. Run Benchmarks 
 
 Run the full suite (ResNet, Swin, ViT, LoRA) sequentially:
 
