@@ -2,9 +2,9 @@ seed: 42
 dataset_path: "data/eurosat"
 dataset_version: "v1.0"
 augmentation: "light"
-batch_size: 32
+batch_size: 64
 model:
   name: "vit_base"
-  lr: 0.001
-  epochs: 1
+  lr: 0.0001  # Lower LR for ViT-Base full fine-tuning is usually safer
+  epochs: 20
   use_lora: false
