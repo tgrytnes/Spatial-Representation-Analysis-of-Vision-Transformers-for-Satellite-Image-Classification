@@ -86,7 +86,12 @@ def test_run_experiment_logs_to_wandb(
     mock_evaluate.return_value = (0.4, 0.85, 0.85)
 
     mock_model = MagicMock()
-    mock_model.parameters.return_value = [MagicMock(spec=torch.Tensor)]
+    # Create a mock parameter that acts like a tensor with numel() returning an int
+    mock_param = MagicMock(spec=torch.Tensor)
+    mock_param.numel.return_value = 1000
+    mock_param.requires_grad = True
+
+    mock_model.parameters.return_value = [mock_param]
     mock_create_model.return_value = mock_model
     # Ensure .to(device) returns the same mock with parameters
     mock_model.to.return_value = mock_model

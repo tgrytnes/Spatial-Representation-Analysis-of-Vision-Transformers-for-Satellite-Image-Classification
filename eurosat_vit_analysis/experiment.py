@@ -170,12 +170,33 @@ def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Pa
     model_config = config.get("model", {})
     model_name = model_config.get("name", "swin_t")
     freeze_backbone = model_config.get("freeze_backbone", False)
+    use_lora = model_config.get("use_lora", False)
+    lora_r = model_config.get("lora_r", 16)
 
     model = create_model(
         model_name=model_name,
         num_classes=len(class_names),
         freeze_backbone=freeze_backbone,
+        use_lora=use_lora,
+        lora_r=lora_r,
     ).to(device)
+
+    # Log parameter stats
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    reduction = 100 * (1 - trainable_params / total_params)
+
+    print(f"Total Params: {total_params:,}")
+    print(f"Trainable Params: {trainable_params:,}")
+    print(f"Reduction: {reduction:.2f}%")
+
+    wandb.config.update(
+        {
+            "total_params": total_params,
+            "trainable_params": trainable_params,
+            "param_reduction_pct": reduction,
+        }
+    )
 
     # Optimizer & Loss
     lr = float(model_config.get("lr", 1e-4))
