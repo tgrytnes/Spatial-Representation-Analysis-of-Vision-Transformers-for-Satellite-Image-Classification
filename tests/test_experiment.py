@@ -108,3 +108,6 @@ def test_run_experiment_logs_to_wandb(
     assert "accuracy" in logged_metrics
     assert "f1_macro" in logged_metrics
     assert "loss" in logged_metrics
+
+    # Check that manifest was saved to wandb
+    assert mock_wandb.save.called

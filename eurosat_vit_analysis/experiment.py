@@ -241,6 +241,9 @@ def run_experiment(config: dict[str, Any], output_dir: Path | None = None) -> Pa
     print("Best Metrics:", final_metrics)
     print("Manifest:", manifest_path)
 
+    # Sync manifest to W&B
+    wandb.save(str(manifest_path), base_path=str(manifest_path.parent))
+
     wandb.finish()
     return manifest_path
 
