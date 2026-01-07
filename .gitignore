@@ -106,3 +106,7 @@ data/**
 # IDE specific
 .idea/
 .vscode/
+
+# Experiment Artifacts
+manifests/
+wandb/

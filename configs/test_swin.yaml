@@ -1,0 +1,6 @@
+seed: 42
+dataset_version: "manual-test"
+model:
+  name: "swin_t"
+  freeze_backbone: true
+batch_size: 32
