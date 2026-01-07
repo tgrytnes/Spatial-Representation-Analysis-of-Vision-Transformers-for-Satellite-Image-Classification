@@ -60,21 +60,21 @@ poetry install
 
 ## 5. Configure Secrets & APIs (Local .env Transfer)
 
-To avoid typing secrets into the pod, prepare a `.env` file on your **local machine** first. This file is already in `.gitignore` and will never be committed.
+To avoid typing secrets into the pod, prepare a `.env` file on your **local machine** first.
 
 ### Local Preparation
-Create a file named `.env` in your local project root:
+Use the provided template to create your local secrets file:
 
-```ini
-# Weights & Biases API Key (https://wandb.ai/authorize)
-WANDB_API_KEY=wandb_v1_...
+```bash
+# 1. Copy the template
+cp .env.example .env
 
-# Azure Storage Connection String (Required for 'dvc pull')
-AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...;EndpointSuffix=core.windows.net"
+# 2. Fill in your real keys
+nano .env
 ```
 
 ### Transfer to Pod
-You can transfer this file to the pod using `scp` (replace `[POD_IP]` and `[PORT]` with your specific RunPod details):
+Transfer this file to the pod using `scp` (replace `[POD_IP]` and `[PORT]` with your specific RunPod details):
 
 ```bash
 scp -P [PORT] .env root@[POD_IP]:/root/Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification/
