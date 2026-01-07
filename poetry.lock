@@ -4795,29 +4795,31 @@ oldlibyaml = ["ruamel.yaml.clib ; platform_python_implementation == \"CPython\""
 
 [[package]]
 name = "ruff"
-version = "0.0.288"
-description = "An extremely fast Python linter, written in Rust."
+version = "0.14.10"
+description = "An extremely fast Python linter and code formatter, written in Rust."
 optional = false
 python-versions = ">=3.7"
 groups = ["dev"]
 files = [
-    {file = "ruff-0.0.288-py3-none-macosx_10_7_x86_64.whl", hash = "sha256:64c01615b8640c703a56a1eac3114a653166eafa5d416ffc9e6cafbfb86ab927"},
-    {file = "ruff-0.0.288-py3-none-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:84691fd3c8edd705c27eb7ccf745a3530c31e4c83010f9ce20e0b9eb0578f099"},
-    {file = "ruff-0.0.288-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e08c81394ae272b1595580dad1bfc62de72d9356c51e76b5c2fdd546f84e6168"},
-    {file = "ruff-0.0.288-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:db1de2ac1de219f29c12940b429fe365974c3d9f69464c4660c06e4b4b284dba"},
-    {file = "ruff-0.0.288-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bd9977eee17d7f29beca74b478f6930c7dd006d486bac615c849a3436384fc28"},
-    {file = "ruff-0.0.288-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:2d5df4a49eaa11536776b1efcc4e88e373b205a958712185de8e4ae287397614"},
-    {file = "ruff-0.0.288-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:10feeabd15e2c6e06bce75aa97e806009cf909261cd124f24ef832385914aae9"},
-    {file = "ruff-0.0.288-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:0496556da7b413279370cae7de001a0415279e9318dc1fabd447a3ca7b398bce"},
-    {file = "ruff-0.0.288-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ef9a6563bbacfc7afdba04722d742db4f1961ab6f398a2e305b43c21d418c149"},
-    {file = "ruff-0.0.288-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:ea0535d48f674d6a6bf1e6fb1a18c40622cb6496b0994cfdcd7aec763ef8b589"},
-    {file = "ruff-0.0.288-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:e450e50a936409439bf4e28e85412622693350cf4da89c69e1f14af21ddbc467"},
-    {file = "ruff-0.0.288-py3-none-musllinux_1_2_i686.whl", hash = "sha256:28ee03358e4eb89e843cb4fd9cf0406eb603a7e060436ffc623b29544e374c2b"},
-    {file = "ruff-0.0.288-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:13d1e6cef389dc0238ef0e97e25561c925bf255d0f59f70ed2d6bd0a13fdd7b0"},
-    {file = "ruff-0.0.288-py3-none-win32.whl", hash = "sha256:7534da2f1e724b87a5041615652bca7c6e721f90ae3a01d1d8e965d08a615038"},
-    {file = "ruff-0.0.288-py3-none-win_amd64.whl", hash = "sha256:73066b1da66b3d4942cce8c90fd6e09108851e0867a5f7071255d1b99aee3e75"},
-    {file = "ruff-0.0.288-py3-none-win_arm64.whl", hash = "sha256:6ca84861bf046e4365e20f4d664dc0aa02b377a6896a393dad716e033ac47a65"},
-    {file = "ruff-0.0.288.tar.gz", hash = "sha256:71eb3e09cb47cc02c13c6dc5561055b913572995cf5fa8286948f938bc464621"},
+    {file = "ruff-0.14.10-py3-none-linux_armv6l.whl", hash = "sha256:7a3ce585f2ade3e1f29ec1b92df13e3da262178df8c8bdf876f48fa0e8316c49"},
+    {file = "ruff-0.14.10-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:674f9be9372907f7257c51f1d4fc902cb7cf014b9980152b802794317941f08f"},
+    {file = "ruff-0.14.10-py3-none-macosx_11_0_arm64.whl", hash = "sha256:d85713d522348837ef9df8efca33ccb8bd6fcfc86a2cde3ccb4bc9d28a18003d"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6987ebe0501ae4f4308d7d24e2d0fe3d7a98430f5adfd0f1fead050a740a3a77"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:16a01dfb7b9e4eee556fbfd5392806b1b8550c9b4a9f6acd3dbe6812b193c70a"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:7165d31a925b7a294465fa81be8c12a0e9b60fb02bf177e79067c867e71f8b1f"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:c561695675b972effb0c0a45db233f2c816ff3da8dcfbe7dfc7eed625f218935"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4bb98fcbbc61725968893682fd4df8966a34611239c9fd07a1f6a07e7103d08e"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:f24b47993a9d8cb858429e97bdf8544c78029f09b520af615c1d261bf827001d"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:59aabd2e2c4fd614d2862e7939c34a532c04f1084476d6833dddef4afab87e9f"},
+    {file = "ruff-0.14.10-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:213db2b2e44be8625002dbea33bb9c60c66ea2c07c084a00d55732689d697a7f"},
+    {file = "ruff-0.14.10-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:b914c40ab64865a17a9a5b67911d14df72346a634527240039eb3bd650e5979d"},
+    {file = "ruff-0.14.10-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:1484983559f026788e3a5c07c81ef7d1e97c1c78ed03041a18f75df104c45405"},
+    {file = "ruff-0.14.10-py3-none-musllinux_1_2_i686.whl", hash = "sha256:c70427132db492d25f982fffc8d6c7535cc2fd2c83fc8888f05caaa248521e60"},
+    {file = "ruff-0.14.10-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:5bcf45b681e9f1ee6445d317ce1fa9d6cba9a6049542d1c3d5b5958986be8830"},
+    {file = "ruff-0.14.10-py3-none-win32.whl", hash = "sha256:104c49fc7ab73f3f3a758039adea978869a918f31b73280db175b43a2d9b51d6"},
+    {file = "ruff-0.14.10-py3-none-win_amd64.whl", hash = "sha256:466297bd73638c6bdf06485683e812db1c00c7ac96d4ddd0294a338c62fdc154"},
+    {file = "ruff-0.14.10-py3-none-win_arm64.whl", hash = "sha256:e51d046cf6dda98a4633b8a8a771451107413b0f07183b2bef03f075599e44e6"},
+    {file = "ruff-0.14.10.tar.gz", hash = "sha256:9a2e830f075d1a42cd28420d7809ace390832a490ed0966fe373ba288e77aaf4"},
 ]
 
 [[package]]
@@ -6240,4 +6242,4 @@ test = ["zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "6f11ecbff2b1c57feeae2c4892b5749ebccfbbf7f80d489f6f145294295d51f6"
+content-hash = "48b1627bb8be2ae657289bf6e76a1424d54a938779ae68a0252d960548ba01ea"
