@@ -10,7 +10,12 @@ def base_config() -> dict:
     return {
         "seed": 123,
         "dataset_version": "unit-test",
-        "model": {"name": "swin_t", "freeze_backbone": True, "epochs": 1},
+        "model": {
+            "name": "swin_t",
+            "freeze_backbone": True,
+            "epochs": 1,
+            "pretrained": False,
+        },
         "batch_size": 2,
         "dataset_path": "dummy_path",
     }
