@@ -1,0 +1,10 @@
+seed: 42
+dataset_path: "data/eurosat"
+dataset_version: "v1.0"
+augmentation: "light"
+batch_size: 64
+model:
+  name: "convnext_t"
+  lr: 0.001
+  epochs: 20
+  use_lora: false
