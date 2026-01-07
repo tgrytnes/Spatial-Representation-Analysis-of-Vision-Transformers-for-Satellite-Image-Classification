@@ -56,7 +56,9 @@ def create_model(
             # PEFT LoRA supports Conv2d now.
             target_modules = ["conv1", "conv2", "fc"]
         elif "convnext" in model_name:
-            target_modules = ["conv_dw", "mlp.fc1", "mlp.fc2"]
+            # Avoid depthwise convs (conv_dw) because LoRA on grouped Conv2d
+            # requires rank divisible by groups, which breaks for ConvNeXt.
+            target_modules = ["mlp.fc1", "mlp.fc2"]
 
         # If we can't guess, let PEFT try to find standard names or user provides config
         # For this MVP, we stick to simple rules.
