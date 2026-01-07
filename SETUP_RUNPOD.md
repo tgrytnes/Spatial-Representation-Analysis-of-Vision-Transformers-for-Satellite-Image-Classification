@@ -23,16 +23,49 @@ update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 2
 # Choose 2 (Python 3.11) if prompted, or it might auto-select.
 ```
 
-## 2. Configure Git
+## 2. Configure Secrets (First Step)
 
-Before cloning or committing, set up your identity:
+To automate everything (Git, W&B, Azure), prepare a `.env` file on your **local machine** first.
+
+### Local Preparation
+Use the provided template to create your local secrets file:
 
 ```bash
-git config --global user.name "Your Name"
-git config --global user.email "your.email@example.com"
+# 1. Copy the template
+cp .env.example .env
+
+# 2. Fill in your real keys (W&B, GitHub, Azure)
+nano .env
 ```
 
-## 3. Install Poetry
+### Transfer to Pod
+Transfer this file to the pod using `scp` (replace `[POD_IP]` and `[PORT]` with your specific RunPod details):
+
+```bash
+scp -P [PORT] .env root@[POD_IP]:/root/
+```
+
+### Apply Secrets
+On the pod, export the variables:
+
+```bash
+export $(grep -v '^#' /root/.env | xargs)
+```
+
+## 3. Configure Git (Automated)
+
+Once secrets are exported, configure Git in one line:
+
+```bash
+git config --global user.name "$GITHUB_USERNAME"
+git config --global user.email "$GITHUB_USERNAME@users.noreply.github.com"
+git config --global credential.helper store
+
+# Setup automatic authentication for cloning/pushing using the token
+echo "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" > ~/.git-credentials
+```
+
+## 4. Install Poetry
 
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
@@ -41,14 +74,14 @@ curl -sSL https://install.python-poetry.org | python3 -
 export PATH="/root/.local/bin:$PATH"
 ```
 
-## 3. Clone Repository
+## 5. Clone Repository
 
 ```bash
 git clone https://github.com/tgrytnes/Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification.git
 cd Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification
 ```
 
-## 4. Install Dependencies
+## 6. Install Dependencies
 
 ```bash
 # Configure poetry to use our new Python 3.11
@@ -58,38 +91,15 @@ poetry env use python3.11
 poetry install
 ```
 
-## 5. Configure Secrets & APIs (Local .env Transfer)
+## 7. Login Services
 
-To avoid typing secrets into the pod, prepare a `.env` file on your **local machine** first.
-
-### Local Preparation
-Use the provided template to create your local secrets file:
+If you didn't set variables in step 2, you can login manually:
 
 ```bash
-# 1. Copy the template
-cp .env.example .env
-
-# 2. Fill in your real keys
-nano .env
+poetry run wandb login
 ```
 
-### Transfer to Pod
-Transfer this file to the pod using `scp` (replace `[POD_IP]` and `[PORT]` with your specific RunPod details):
-
-```bash
-scp -P [PORT] .env root@[POD_IP]:/root/Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification/
-```
-
-*Alternatively, use the "Upload" button in the RunPod Jupyter/Web interface.*
-
-### Apply Secrets
-Once the file is on the pod, export the variables to your current session:
-
-```bash
-export $(grep -v '^#' .env | xargs)
-```
-
-## 6. Get Data
+## 8. Get Data
 
 ### Path A: Fast Download (Recommended)
 Download the raw dataset directly from the source. No Azure keys required.
@@ -97,13 +107,12 @@ Download the raw dataset directly from the source. No Azure keys required.
 poetry run python download.py
 ```
 
-### Path B: DVC Pull (Requires Azure Key)
-If you set up the Azure key in step 5:
+### Path B: DVC Pull (Requires Azure Key in .env)
 ```bash
 poetry run dvc pull
 ```
 
-## 7. Run Benchmarks
+## 9. Run Benchmarks
 
 Run the full suite (ResNet, Swin, ViT, LoRA) sequentially:
 
@@ -114,5 +123,5 @@ for cfg in configs/benchmarks/*.yaml; do
 done
 ```
 
-## 8. View Results
+## 10. View Results
 Go to your W&B Dashboard to see live charts and comparisons.
