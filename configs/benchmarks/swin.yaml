@@ -1,0 +1,10 @@
+seed: 42
+dataset_path: "data/eurosat"
+dataset_version: "v1.0"
+augmentation: "light"
+batch_size: 32
+model:
+  name: "swin_t"
+  lr: 0.001
+  epochs: 1
+  use_lora: false
