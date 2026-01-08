@@ -1,0 +1,5 @@
+outs:
+- md5: 9dd6003079e3ea6cd7e913e3ae0324ea
+  size: 343270814
+  hash: md5
+  path: vit_base.pt
