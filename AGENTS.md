@@ -6,9 +6,11 @@
 - Use the project environment (`poetry run ...`) for Python commands.
 
 ## Stories & Issues
-- GitHub issues are the source of truth for significant changes.
+- GitHub Issues are the single source of truth for all stories and issues.
+- Do not implement a story or issue unless it exists in GitHub Issues.
 - If no issue exists for a non-trivial change, create or request one first.
 - Ensure acceptance criteria are clear before implementation.
+- When asked to continue or implement a story, use `gh` to search GitHub Issues for the story ID/title before starting work.
 
 ## Tests & Quality
 - Develop in TDD style when changing behavior: write failing tests first.
@@ -18,4 +20,5 @@
 - If `make` is unavailable: `poetry run ruff check .`, `poetry run black --check .`, and `poetry run pytest --cov=eurosat_vit_analysis --cov-fail-under=80`.
 
 ## Branching
-- Use a feature branch and PR for non-trivial changes when possible.
+- Create and switch to a feature branch before starting any new feature work.
+- Use a PR for non-trivial changes.
