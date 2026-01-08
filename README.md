@@ -180,4 +180,4 @@ make test
 ```
 
 ## 🧭 Roadmap
-See `user stories.md` for the full roadmap and epic-level plan.
+Roadmap items live in GitHub Issues. See the project issue list for epics and stories.
