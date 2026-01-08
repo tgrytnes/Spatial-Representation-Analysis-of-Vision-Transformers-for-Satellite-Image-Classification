@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -29,6 +30,9 @@ def _load_model(name: str) -> torch.nn.Module | None:
     if name == "dummy":
         return None
     import timm
+    from timm.layers import set_fused_attn
+
+    set_fused_attn(False)
 
     return timm.create_model(name, pretrained=True).eval()
 
@@ -51,7 +55,7 @@ def _parse_args(argv: Iterable[str]) -> argparse.Namespace:
 
 
 def main(argv: Iterable[str] | None = None) -> int:
-    args = _parse_args(argv or [])
+    args = _parse_args(sys.argv[1:] if argv is None else argv)
 
     image = Image.open(args.image).convert("RGB")
     image = image.resize((args.image_size, args.image_size))
