@@ -5,9 +5,16 @@ PYTHON_VERSION="${PYTHON_VERSION:-3.11.9}"
 PYTHON_PREFIX="${PYTHON_PREFIX:-/usr/local}"
 POETRY_VERSION="${POETRY_VERSION:-1.8.3}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ENV_FILE="${ENV_FILE:-${SCRIPT_DIR}/../.env}"
-REPO_URL="${REPO_URL:-https://github.com/tgrytnes/Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification.git}"
 REPO_DIR="${REPO_DIR:-${SCRIPT_DIR}/..}"
+
+# Prefer repo .env, fall back to /root/.env, allow ENV_FILE override.
+DEFAULT_ENV_FILE="${REPO_DIR}/.env"
+if [[ ! -f "${DEFAULT_ENV_FILE}" && -f "/root/.env" ]]; then
+  DEFAULT_ENV_FILE="/root/.env"
+fi
+ENV_FILE="${ENV_FILE:-${DEFAULT_ENV_FILE}}"
+
+REPO_URL="${REPO_URL:-https://github.com/tgrytnes/Spatial-Representation-Analysis-of-Vision-Transformers-for-Satellite-Image-Classification.git}"
 
 get_env_var() {
   local key="$1"
@@ -88,8 +95,14 @@ curl -sSL https://install.python-poetry.org | "${PYTHON_BIN}" -
 
 POETRY_BIN="${HOME}/.local/bin/poetry"
 export PATH="${HOME}/.local/bin:${PATH}"
-echo "Poetry installed at ${POETRY_BIN}"
-echo "Make sure ${HOME}/.local/bin is on your PATH."
+
+# Persist Poetry in PATH for future shells
+if ! grep -q '/root/.local/bin' /root/.bashrc; then
+  echo 'export PATH="/root/.local/bin:$PATH"' >> /root/.bashrc
+fi
+
+
+
 
 GITHUB_NAME_ENV=""
 GITHUB_EMAIL_ENV=""
@@ -155,7 +168,10 @@ if [[ -n "${AZURE_STORAGE_CONNECTION_STRING_ENV}" ]]; then
   echo "Configuring DVC Azure remote..."
   "${POETRY_BIN}" run pip install dvc-azure
   "${POETRY_BIN}" run dvc remote modify --local azure-remote connection_string "${AZURE_STORAGE_CONNECTION_STRING_ENV}"
-  "${POETRY_BIN}" run dvc pull
+  "${POETRY_BIN}" run dvc pull data/eurosat.dvc
+  ls -la data/eurosat
 else
   echo "Skipping DVC pull (set AZURE_STORAGE_CONNECTION_STRING in .env)."
 fi
+
+
