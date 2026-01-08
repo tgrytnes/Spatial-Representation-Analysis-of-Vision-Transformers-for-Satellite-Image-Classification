@@ -86,7 +86,9 @@ echo "Installing Poetry ${POETRY_VERSION}..."
 export POETRY_VERSION
 curl -sSL https://install.python-poetry.org | "${PYTHON_BIN}" -
 
-echo "Poetry installed at ${HOME}/.local/bin/poetry"
+POETRY_BIN="${HOME}/.local/bin/poetry"
+export PATH="${HOME}/.local/bin:${PATH}"
+echo "Poetry installed at ${POETRY_BIN}"
 echo "Make sure ${HOME}/.local/bin is on your PATH."
 
 GITHUB_NAME_ENV=""
@@ -139,21 +141,21 @@ fi
 
 echo "Installing Python dependencies with Poetry..."
 cd "${REPO_DIR}"
-poetry env use "${PYTHON_BIN}"
-poetry install
+"${POETRY_BIN}" env use "${PYTHON_BIN}"
+"${POETRY_BIN}" install
 
 if [[ -n "${WANDB_API_KEY_ENV}" ]]; then
   echo "Logging into Weights & Biases..."
-  poetry run wandb login "${WANDB_API_KEY_ENV}"
+  "${POETRY_BIN}" run wandb login "${WANDB_API_KEY_ENV}"
 else
   echo "Skipping W&B login (set WANDB_API_KEY in .env)."
 fi
 
 if [[ -n "${AZURE_STORAGE_CONNECTION_STRING_ENV}" ]]; then
   echo "Configuring DVC Azure remote..."
-  poetry run pip install dvc-azure
-  poetry run dvc remote modify --local azure-remote connection_string "${AZURE_STORAGE_CONNECTION_STRING_ENV}"
-  poetry run dvc pull
+  "${POETRY_BIN}" run pip install dvc-azure
+  "${POETRY_BIN}" run dvc remote modify --local azure-remote connection_string "${AZURE_STORAGE_CONNECTION_STRING_ENV}"
+  "${POETRY_BIN}" run dvc pull
 else
   echo "Skipping DVC pull (set AZURE_STORAGE_CONNECTION_STRING in .env)."
 fi
