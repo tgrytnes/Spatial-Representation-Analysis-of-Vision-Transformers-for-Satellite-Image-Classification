@@ -167,11 +167,20 @@ fi
 if [[ -n "${AZURE_STORAGE_CONNECTION_STRING_ENV}" ]]; then
   echo "Configuring DVC Azure remote..."
   "${POETRY_BIN}" run pip install dvc-azure
+
+  # Remove any broken config and set fresh
+  "${POETRY_BIN}" run dvc remote modify --local --unset azure-remote connection_string 2>/dev/null || true
   "${POETRY_BIN}" run dvc remote modify --local azure-remote connection_string "${AZURE_STORAGE_CONNECTION_STRING_ENV}"
+
+  # Verify configuration was set correctly
+  if "${POETRY_BIN}" run dvc remote list --local | grep -q azure-remote; then
+    echo "DVC remote configured successfully."
+  else
+    echo "Warning: DVC remote configuration may not have persisted."
+  fi
+
   "${POETRY_BIN}" run dvc pull data/eurosat.dvc
   ls -la data/eurosat
 else
   echo "Skipping DVC pull (set AZURE_STORAGE_CONNECTION_STRING in .env)."
 fi
-
-
