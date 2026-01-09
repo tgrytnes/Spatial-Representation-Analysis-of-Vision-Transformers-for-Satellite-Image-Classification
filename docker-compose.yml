@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # FastAPI Inference API (can run locally or on RunPod)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.runpod
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./eurosat_vit_analysis:/app/eurosat_vit_analysis
+      - ./api_server.py:/app/api_server.py
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # NiceGUI Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.nicegui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nicegui_app.py:/app/nicegui_app.py
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
