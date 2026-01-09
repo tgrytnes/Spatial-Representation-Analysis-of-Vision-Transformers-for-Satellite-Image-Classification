@@ -222,6 +222,14 @@ def main():
         """
     )
 
+    # Show device info
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        gpu_name = torch.cuda.get_device_name(0)
+        st.success(f"⚡ GPU Acceleration Enabled: {gpu_name}")
+    else:
+        st.info("💻 Running on CPU (inference may take 10-20 seconds)")
+
     # Sidebar configuration
     st.sidebar.header("Configuration")
 
